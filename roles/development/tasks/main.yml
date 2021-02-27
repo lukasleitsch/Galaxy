@@ -1,0 +1,43 @@
+- name: Add the user 'dev'
+  become: yes
+  user:
+    name: dev
+    group: dev
+    groups: docker
+    append: yes
+
+- name: Set authorized key for dev
+  become: yes
+  authorized_key:
+    user: dev
+    state: present
+    key: '{{ item }}'
+  with_file:
+    - public_keys/main
+    - public_keys/gitlab-runner
+
+- name: Add .hushlogin file
+  become: yes
+  file:
+    path: /home/dev/.hushlogin
+    owner: dev
+    group: dev
+    state: touch
+    modification_time: preserve
+    access_time: preserve
+
+- name: Login in docker registry
+  become: yes
+  become_user: dev
+  docker_login:
+    registry_url: "{{ docker_registry_url }}"
+    username: "{{ docker_registry_username }}"
+    password: "{{ docker_registry_password }}"
+
+- name: Create sites directory
+  become: yes
+  file:
+    path: /home/dev/sites
+    owner: dev
+    group: dev
+    state: directory

@@ -1,0 +1,44 @@
+---
+- name: Setup
+  hosts: all
+  remote_user: deployer
+  vars_files:
+    - vars/setup.yml
+    - vars/secrets.yml
+  roles:
+    - common
+    - swap
+    - setupSSH
+    - packages
+    - shell
+    - unattended-upgrades
+  handlers:
+    - include: handlers.yml
+
+- name: Setup Docker
+  hosts: docker
+  remote_user: deployer
+  roles:
+    - docker
+
+- name: Configure Borg backup
+  hosts: borgbackup
+  become: true
+  remote_user: deployer
+  roles:
+    - role: m3nu.ansible_role_borgbackup
+      tags: ['backup']
+
+- name: Setup Development
+  hosts: development
+  remote_user: deployer
+  roles:
+    - role: development
+      tags: ['development']
+
+- name: Setup Monitoring
+  hosts: monitoring
+  remote_user: deployer
+  roles:
+    - role: monitoring
+      tags: ['monitoring']

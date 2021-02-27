@@ -1,0 +1,31 @@
+- name: Make sure we have a 'wheel' group
+  group:
+    name: wheel
+    state: present
+
+- name: Allow 'wheel' group to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%wheel'
+    line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+    validate: 'visudo -cf %s'
+
+- name: Add deployer user and add it to sudo
+  user:
+    name=deployer
+    groups=wheel
+    state=present
+    createhome=yes
+
+- name: Set up authorized keys for the deployer user
+  authorized_key: user=deployer key="{{item}}"
+  with_file:
+    - "{{ path_ssh_key_pub }}"
+
+- name: Change SSH port
+  lineinfile:
+    dest: "/etc/ssh/sshd_config"
+    regexp: "^#?Port"
+    line: "Port {{ ssh_port }}"
+  notify: restart ssh

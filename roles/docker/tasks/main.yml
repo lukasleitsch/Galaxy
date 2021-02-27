@@ -1,0 +1,76 @@
+- name: Add Docker GPG key
+  become: yes
+  apt_key: url=https://download.docker.com/linux/ubuntu/gpg
+
+- name: Add Docker APT repository
+  become: yes
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ansible_distribution_release}} stable
+
+- name: Install Docker with dependencies
+  package:
+    state: present
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - docker-ce
+      - python3-pip
+  become: yes
+
+- name: Install python dependencies
+  become: yes
+  pip:
+    name: docker-py
+    state: latest
+
+- name: Add deployer to docker group
+  become: yes
+  user:
+    name: deployer
+    groups: docker
+    state: present
+    append: yes
+
+- name: Deploy Docker daemon.json.
+  become: yes
+  copy:
+    src: files/daemon.json
+    dest: /etc/docker/daemon.json
+  notify: restart docker
+
+- name: Check current docker-compose version.
+  command: docker-compose --version
+  register: docker_compose_current_version
+  changed_when: false
+  failed_when: false
+  tags:
+    - docker-compose
+
+- name: Delete existing docker-compose version if it's different.
+  file:
+    path: "{{ docker_compose_path }}"
+    state: absent
+  when: >
+    docker_compose_current_version.stdout is defined
+    and docker_compose_version not in docker_compose_current_version.stdout
+  tags:
+    - docker-compose
+
+- name: Install Docker Compose
+  become: yes
+  get_url:
+    url: https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64
+    dest: "{{ docker_compose_path }}"
+    mode: 0755
+  tags:
+    - docker-compose
+
+- name: Create a docker directory
+  become: yes
+  file:
+    path: /docker
+    owner: deployer
+    group: deployer
+    state: directory

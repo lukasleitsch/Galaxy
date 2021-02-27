@@ -1,0 +1,11 @@
+---
+- name: First run
+  hosts: all
+  remote_user: root
+
+  roles:
+    - common
+    - firstRun
+
+  handlers:
+    - include: handlers.yml

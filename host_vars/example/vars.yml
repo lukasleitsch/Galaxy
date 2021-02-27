@@ -1,0 +1,8 @@
+path_ssh_key_pub:
+ssh_port:
+borg_encryption_passphrase: "{{ vault_borg_encryption_passphrase }}"
+borg_repository: "{{ vault_borg_repository }}"
+borg_source_directories:
+borgmatic_before_backup_command:
+borgmatic_hooks:
+    healthchecks: "{{ vault_healthchecks }}"

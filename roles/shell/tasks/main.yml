@@ -1,0 +1,54 @@
+- name: Set default shell for users
+  become: yes
+  user:
+    name: '{{ item }}'
+    shell: /bin/fish
+  with_items:
+      - root
+      - deployer
+
+- name: Creates fish/conf.d directory
+  become: yes
+  file:
+    path: "{{ item.path }}/.config/fish/conf.d"
+    state: directory
+    recurse: yes
+    owner: "{{ item.user }}"
+    group: "{{ item.user }}"
+  with_items:
+    - { user: 'root', path: '/root' }
+    - { user: 'deployer', path: '/home/deployer' }
+
+- name: Copy fish config to home directory
+  become: yes
+  template:
+    src: config.fish.j2
+    dest: "{{ item.path }}/.config/fish/config.fish"
+    force: yes
+    owner: "{{ item.user }}"
+    group: "{{ item.user }}"
+  with_items:
+    - { user: 'root', path: '/root' }
+    - { user: 'deployer', path: '/home/deployer' }
+
+- name: Download and update iTerm2 shell integration
+  become: yes
+  get_url:
+    url: https://iterm2.com/shell_integration/fish
+    dest: "{{ item }}/.config/fish/conf.d/iterm2_integration.fish"
+    force: yes
+  with_items:
+    - /home/deployer
+    - /root
+
+- name: Set git user name for 'deployer'
+  git_config:
+    name: user.name
+    scope: global
+    value: "{{ git_username }}"
+
+- name: Set git email for 'deployer'
+  git_config:
+    name: user.email
+    scope: global
+    value: "{{ git_email }}"

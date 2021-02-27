@@ -1,0 +1,7 @@
+- name: Copy disk monitoring script
+  become: yes
+  ansible.builtin.template:
+    src: disk_monitoring.sh.j2
+    dest: "/usr/local/bin/disk_monitoring.sh"
+    mode: +x
+    force: yes

@@ -1,0 +1,9 @@
+- name: restart ssh
+  shell: sleep 3; systemctl restart sshd
+  async: 1
+  poll: 0
+
+- name: restart ufw
+  service:
+    name=ufw
+    state=restarted

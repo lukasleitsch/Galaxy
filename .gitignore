@@ -1,0 +1,5 @@
+hosts
+.DS_Store
+host_vars/*
+!host_vars/example
+vars/secrets.yml

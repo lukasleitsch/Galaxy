@@ -1,0 +1,23 @@
+- name: Setup fail2ban
+  include_role:
+    name: oefenweb.fail2ban
+
+  vars:
+    ansible_become: yes
+    fail2ban_services:
+      - name: sshd
+        port: "{{ ssh_port }}"
+        maxretry: 3
+        bantime: -1
+
+- name: Install Dependencies
+  become: yes
+  package:
+    name:
+      - git
+      - fish
+      - htop
+      - zip
+      - unzip
+      - ncdu
+    state: present

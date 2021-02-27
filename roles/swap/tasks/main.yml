@@ -1,0 +1,17 @@
+- include_role:
+    name: geerlingguy.swap
+  vars:
+    ansible_become: yes
+  when: swap_file_size_mb is defined
+  tags:
+    - swap
+
+- name: Set vfs_cache_pressure.
+  become: yes
+  sysctl:
+    name: vm.vfs_cache_pressure
+    value: "50"
+    state: present
+  when: swap_file_size_mb is defined
+  tags:
+    - swap

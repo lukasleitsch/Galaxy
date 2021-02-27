@@ -1,0 +1,53 @@
+- name: Disable Password Authentication
+  lineinfile:
+    dest=/etc/ssh/sshd_config
+    regexp="^#?PasswordAuthentication"
+    line="PasswordAuthentication no"
+    state=present
+  become: yes
+  tags:
+    - ssh
+  notify:
+  - restart ssh
+
+- name: Disable Root Login
+  lineinfile:
+    dest=/etc/ssh/sshd_config
+    regexp='^PermitRootLogin'
+    line="PermitRootLogin no"
+    state=present
+  become: yes
+  tags:
+    - ssh
+  notify:
+  - restart ssh
+
+- name: Disable empty password login
+  lineinfile:
+    dest=/etc/ssh/sshd_config
+    regexp="^#?PermitEmptyPasswords"
+    line="PermitEmptyPasswords no"
+  become: yes
+  notify: restart ssh
+  tags:
+    - ssh
+
+- name: Enable SSH protocol version 2
+  lineinfile:
+    dest=/etc/ssh/sshd_config
+    regexp='^#?Protocol 2'
+    line='Protocol 2'
+  become: yes
+  notify: restart ssh
+  tags:
+    - ssh
+
+- name: Add allowed ssh user
+  lineinfile:
+    dest=/etc/ssh/sshd_config
+    regexp='^AllowUsers'
+    line='AllowUsers deployer dev'
+  become: yes
+  notify: restart ssh
+  tags:
+    - ssh
