@@ -49,6 +49,7 @@
     - docker-compose
 
 - name: Delete existing docker-compose version if it's different.
+  become: yes
   file:
     path: "{{ docker_compose_path }}"
     state: absent
@@ -74,3 +75,14 @@
     owner: deployer
     group: deployer
     state: directory
+
+- name: Add docker cleanup cronjob
+  become: yes
+  ansible.builtin.cron:
+    name: "docker cleanup"
+    minute: "0"
+    hour: "23"
+    weekday: "0" # Sunday
+    user: root
+    job: "docker system prune --force > /dev/null"
+    cron_file: docker
