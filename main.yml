@@ -24,7 +24,6 @@
 - name: Configure Borg backup
   hosts: borgbackup
   become: true
-  remote_user: deployer
   roles:
     - role: m3nu.ansible_role_borgbackup
       tags: ['backup']
