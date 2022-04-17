@@ -1,5 +1,6 @@
 hosts
 .DS_Store
+.vscode/
 host_vars/*
 !host_vars/example
 vars/secrets.yml
