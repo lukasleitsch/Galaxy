@@ -12,3 +12,8 @@ ansible-playbook first-run.yml
 ```bash
 ansible-playbook main.yml
 ```
+
+## Update requirements
+```bash
+ansible-galaxy install -r requirements.yml --force
+```
