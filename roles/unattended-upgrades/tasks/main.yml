@@ -13,6 +13,7 @@
       - 'origin=Ubuntu,archive=${distro_codename}-security'
       - 'o=Ubuntu,a=${distro_codename}-updates'
       - 'origin=Docker,a=${distro_codename}'
+      - 'o=Tailscale'
 
   tags:
     - unattended-upgrades

@@ -1,0 +1,17 @@
+- name: Add tailscale apt-key
+  ansible.builtin.apt_key:
+    url: https://pkgs.tailscale.com/stable/ubuntu/focal.gpg
+  become: true
+
+- name: Add tailscale repository
+  ansible.builtin.get_url:
+    url: https://pkgs.tailscale.com/stable/ubuntu/focal.list
+    dest: /etc/apt/sources.list.d/tailscale.list
+    mode: '0644'
+  become: true
+
+- name: Install tailscale and update apt cache
+  ansible.builtin.apt:
+    name: tailscale
+    update_cache: yes
+  become: true

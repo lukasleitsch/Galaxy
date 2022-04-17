@@ -41,3 +41,10 @@
   roles:
     - role: monitoring
       tags: ['monitoring']
+
+- name: Setup Tailscale
+  hosts: tailscale
+  remote_user: deployer
+  roles:
+    - role: tailscale
+      tags: ['tailscale']
