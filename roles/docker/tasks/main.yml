@@ -16,6 +16,9 @@
       - curl
       - software-properties-common
       - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
       - python3-pip
   become: yes
 
@@ -40,34 +43,6 @@
     dest: /etc/docker/daemon.json
   notify: restart docker
 
-- name: Check current docker-compose version.
-  command: docker-compose --version
-  register: docker_compose_current_version
-  changed_when: false
-  failed_when: false
-  tags:
-    - docker-compose
-
-- name: Delete existing docker-compose version if it's different.
-  become: yes
-  file:
-    path: "{{ docker_compose_path }}"
-    state: absent
-  when: >
-    docker_compose_current_version.stdout is defined
-    and docker_compose_version not in docker_compose_current_version.stdout
-  tags:
-    - docker-compose
-
-- name: Install Docker Compose
-  become: yes
-  get_url:
-    url: https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64
-    dest: "{{ docker_compose_path }}"
-    mode: 0755
-  tags:
-    - docker-compose
-
 - name: Create a docker directory
   become: yes
   file:
@@ -86,3 +61,15 @@
     user: root
     job: "docker system prune --force > /dev/null"
     cron_file: docker
+
+- name: Get path of leagcy docker-compose
+  command: which docker-compose
+  register: docker_compose_path
+  ignore_errors: yes
+
+- name: Delete legacy docker-compose
+  become: yes
+  ansible.builtin.file:
+    path: '{{ docker_compose_path.stdout }}'
+    state: absent
+  when: docker_compose_path.rc == 0

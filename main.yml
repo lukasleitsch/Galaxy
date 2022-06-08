@@ -19,7 +19,8 @@
   hosts: docker
   remote_user: deployer
   roles:
-    - docker
+    - role: docker
+      tags: ['docker']
 
 - name: Configure Borg backup
   hosts: borgbackup
