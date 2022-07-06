@@ -7,11 +7,12 @@
     - vars/secrets.yml
   roles:
     - common
-    - swap
     - setupSSH
     - packages
     - shell
     - unattended-upgrades
+    - role: swap
+      tags: ['swap']
   handlers:
     - include: handlers.yml
 
