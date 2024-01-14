@@ -27,7 +27,7 @@
   hosts: borgbackup
   become: true
   roles:
-    - role: m3nu.ansible_role_borgbackup
+    - role: borgbase.ansible_role_borgbackup
       tags: ['backup']
 
 - name: Setup Development
