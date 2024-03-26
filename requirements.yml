@@ -1,4 +1,4 @@
 - src: oefenweb.fail2ban
-- src: jnv.unattended-upgrades
+- src: hifis.unattended_upgrades
 - src: geerlingguy.swap
 - src: borgbase.ansible_role_borgbackup

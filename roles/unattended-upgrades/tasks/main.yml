@@ -1,19 +1,14 @@
 - name: Setup Unattended-Upgrades
-  include_role:
-    name: jnv.unattended-upgrades
+  ansible.builtin.include_role:
+    name: hifis.unattended_upgrades
     apply:
       tags:
         - unattended-upgrades
 
   vars:
-    ansible_become: yes
+    ansible_become: true
     unattended_automatic_reboot: yes
     unattended_automatic_reboot_time: 03:00
-    unattended_origins_patterns:
-      - 'origin=Ubuntu,archive=${distro_codename}-security'
-      - 'o=Ubuntu,a=${distro_codename}-updates'
-      - 'origin=Docker,a=${distro_codename}'
-      - 'o=Tailscale'
 
   tags:
     - unattended-upgrades
