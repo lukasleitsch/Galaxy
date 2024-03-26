@@ -1,1 +1,2 @@
+swap_file_path: /swapfile
 swap_swappiness: '1'
